@@ -12,4 +12,7 @@ setup(
     install_requires=[
         "webviz-config",
     ],
+    project_urls={
+        "Source": "https://github.com/sigurdp/exp-webviz-sumo",
+    },
 )
