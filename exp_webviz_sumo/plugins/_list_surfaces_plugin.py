@@ -1,8 +1,8 @@
 from dash import html
 from dash import Dash, Input, Output
-from fmu.sumo.explorer import Explorer  # type: ignore
+from fmu.sumo.explorer import Explorer
 from fmu.sumo.explorer import Case
-from fmu.sumo.explorer._case_collection import CaseCollection  # type: ignore
+from fmu.sumo.explorer import DocumentCollection
 from webviz_config import WebvizPluginABC
 import webviz_core_components as wcc
 
@@ -66,7 +66,7 @@ class ListSurfacesPlugin(WebvizPluginABC):
                 ])
 
                 selected_field = list(all_fields)[0]
-                my_cases: CaseCollection = sumo.get_cases(fields=[selected_field])
+                my_cases: DocumentCollection = sumo.get_cases(fields=[selected_field])
 
                 case_count = len(my_cases)
                 outstr = f"\nmy_cases (count={case_count}, field={selected_field}):"
