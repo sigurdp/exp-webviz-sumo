@@ -14,6 +14,7 @@ setup(
         #"fmu-sumo@git+https://github.com/equinor/fmu-sumo@e06ece8f6fd674bd6daf7ab31e0ec2fee27ebcbe",
         "fmu-sumo@git+https://github.com/equinor/fmu-sumo@explorer",
         "sumo-wrapper-python@git+https://github.com/equinor/sumo-wrapper-python.git@master",
+        "deprecated"
     ],
     project_urls={
         "Source": "https://github.com/sigurdp/exp-webviz-sumo",

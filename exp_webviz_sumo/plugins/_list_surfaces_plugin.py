@@ -52,8 +52,8 @@ class ListSurfacesPlugin(WebvizPluginABC):
             try:
                 sumo = Explorer(
                     env="dev",
-                    logging_level="DEBUG",
-                    write_back=True,
+                    token=None,
+                    interactive=True,
                 )
 
                 all_fields: dict = sumo.get_fields()
