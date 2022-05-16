@@ -6,6 +6,7 @@ from fmu.sumo.explorer import DocumentCollection
 from webviz_config import WebvizPluginABC
 import webviz_core_components as wcc
 from io import BytesIO
+import traceback
 
 
 
@@ -89,6 +90,10 @@ class ListSurfacesPlugin(WebvizPluginABC):
                 children.append(html.P("Connect done"))
 
             except Exception as exc:
+                print("Exception occurred:")
+                print("---------------------------------------------------------------")
+                traceback.print_exc()
+                print("---------------------------------------------------------------")
                 return [
                     html.U(html.B("Exception occurred:")),
                     html.P(str(exc)),
@@ -130,13 +135,24 @@ class ListSurfacesPlugin(WebvizPluginABC):
                     realization_ids=[0],
                 )
 
+                outstr = f"got {len(surface_collection)} surfaces in surface_collection"
+                print(outstr)
+
                 surf = surface_collection[0]
+
+                outstr = f"surface info: tag_name={surf.tag_name} name={surf.name} realization_id={surf.realization_id}"
+                print(outstr)
+
                 blob_bytes: bytes = surf.blob
                 byte_stream = BytesIO(blob_bytes)
 
                 children.append(html.P("GetBlob done"))
 
             except Exception as exc:
+                print("Exception occurred:")
+                print("---------------------------------------------------------------")
+                traceback.print_exc()
+                print("---------------------------------------------------------------")
                 return [
                     html.U(html.B("Exception occurred:")),
                     html.P(str(exc)),
