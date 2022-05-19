@@ -16,6 +16,8 @@ setup(
         "sumo-wrapper-python@git+https://github.com/equinor/sumo-wrapper-python.git@master",
         "deprecated"
     ],
+    setup_requires=["setuptools_scm"],
+    use_scm_version=True,
     project_urls={
         "Source": "https://github.com/sigurdp/exp-webviz-sumo",
     },
