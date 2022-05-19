@@ -4,10 +4,11 @@ from fmu.sumo.explorer import Explorer
 from fmu.sumo.explorer import Case
 from fmu.sumo.explorer import DocumentCollection
 from webviz_config import WebvizPluginABC
+from webviz_config.webviz_instance_info import WEBVIZ_INSTANCE_INFO, WebvizRunMode
 import webviz_core_components as wcc
 from io import BytesIO
 import traceback
-
+import flask
 
 
 class ListSurfacesPlugin(WebvizPluginABC):
@@ -17,7 +18,12 @@ class ListSurfacesPlugin(WebvizPluginABC):
     ):
         super().__init__()
 
+        self.use_oauth2 = True if WEBVIZ_INSTANCE_INFO.run_mode == WebvizRunMode.PORTABLE else False
         self.set_callbacks(app)
+
+    @property
+    def oauth2(self):
+        return self.use_oauth2
 
     @property
     def layout(self) -> html.Div:
@@ -58,10 +64,14 @@ class ListSurfacesPlugin(WebvizPluginABC):
 
             children = [html.U(html.B("Connect debug info:"))]
 
+            token = None
+            if self.use_oauth2:
+                token = flask.session.get("access_token")
+
             try:
                 sumo = Explorer(
                     env="dev",
-                    token=None,
+                    token=token,
                     interactive=True,
                 )
 
@@ -115,6 +125,10 @@ class ListSurfacesPlugin(WebvizPluginABC):
             children = [html.U(html.B("GetBlob debug info:"))]
 
             sumo_case_id = "0a4b8f65-2d32-91a9-c244-f54d69ea7bb8"
+
+            token = None
+            if self.use_oauth2:
+                token = flask.session.get("access_token")
 
             try:
                 sumo = Explorer(
