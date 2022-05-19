@@ -9,6 +9,7 @@ import webviz_core_components as wcc
 from io import BytesIO
 import traceback
 import flask
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 
 class ListSurfacesPlugin(WebvizPluginABC):
@@ -19,6 +20,10 @@ class ListSurfacesPlugin(WebvizPluginABC):
         super().__init__()
 
         self.use_oauth2 = True if WEBVIZ_INSTANCE_INFO.run_mode == WebvizRunMode.PORTABLE else False
+        #self.use_oauth2 = True
+
+        app.server.wsgi_app = ProxyFix(app.server.wsgi_app, x_proto=1, x_host=1)
+
         self.set_callbacks(app)
 
     @property
