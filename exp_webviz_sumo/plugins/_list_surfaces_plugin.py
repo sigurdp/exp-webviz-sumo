@@ -73,11 +73,13 @@ class ListSurfacesPlugin(WebvizPluginABC):
             if self.use_oauth2:
                 token = flask.session.get("access_token")
 
+            print(f"TOKEN={token}")
+
             try:
                 sumo = Explorer(
                     env="dev",
                     token=token,
-                    interactive=True,
+                    interactive=False,
                 )
 
                 all_fields: dict = sumo.get_fields()
