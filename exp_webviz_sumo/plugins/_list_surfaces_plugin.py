@@ -148,7 +148,7 @@ class ListSurfacesPlugin(WebvizPluginABC):
 
             try:
                 sumo = Explorer(
-                    env="INVALIUD_dev",
+                    env="dev",
                     token=access_token,
                     interactive=interactive_sumo_auth,
                 )
