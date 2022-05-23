@@ -8,6 +8,7 @@ from webviz_config.webviz_instance_info import WEBVIZ_INSTANCE_INFO, WebvizRunMo
 import webviz_core_components as wcc
 from io import BytesIO
 import traceback
+import time
 import flask
 from werkzeug.middleware.proxy_fix import ProxyFix
 
@@ -64,19 +65,22 @@ class ListSurfacesPlugin(WebvizPluginABC):
         )
         def _connect_button_clicked(_n_clicks: int) -> list:
             print("CALLBACK _connect_button_clicked()")
+            start_tim = time.perf_counter()
 
             children = [html.U(html.B("Connect debug info:"))]
 
-            token = None
+            access_token = None
+            interactive_sumo_auth = True
             if self.use_oauth2:
-                token = flask.session.get("access_token")
-            print(f"TOKEN={token}")
+                access_token = flask.session.get("access_token")
+                interactive_sumo_auth = False
+            print(f"token={'YES' if access_token else 'NO'}")
 
             try:
                 sumo = Explorer(
                     env="dev",
-                    token=token,
-                    interactive=False,
+                    token=access_token,
+                    interactive=interactive_sumo_auth,
                 )
                 print("got explorer instance")
 
@@ -102,12 +106,17 @@ class ListSurfacesPlugin(WebvizPluginABC):
                     print(outstr)
                     children.append(html.P(outstr))
 
-                children.append(html.P("Connect done"))
+                elapsed_time_s = time.perf_counter() - start_tim
+                outstr = f"Connect done in {elapsed_time_s:.2f}s"
+                print(outstr)
+                children.append(html.P(outstr))
 
             except Exception as exc:
                 print("Exception occurred:")
                 print("---------------------------------------------------------------")
-                traceback.print_exc()
+                print(exc)
+                print("-----")
+                print(traceback.format_exc())
                 print("---------------------------------------------------------------")
                 return [
                     html.U(html.B("Exception occurred:")),
@@ -124,47 +133,66 @@ class ListSurfacesPlugin(WebvizPluginABC):
         )
         def _getblob_button_clicked(_n_clicks: int) -> list:
             print("CALLBACK _getblob_button_clicked()")
+            start_tim = time.perf_counter()
 
             children = [html.U(html.B("GetBlob debug info:"))]
 
             sumo_case_id = "0a4b8f65-2d32-91a9-c244-f54d69ea7bb8"
 
-            token = None
+            access_token = None
+            interactive_sumo_auth = True
             if self.use_oauth2:
-                token = flask.session.get("access_token")
-            print(f"TOKEN={token}")
+                access_token = flask.session.get("access_token")
+                interactive_sumo_auth = False
+            print(f"token={'YES' if access_token else 'NO'}")
 
-            sumo = Explorer(
-                env="dev",
-                token=token,
-                interactive=False,
-            )
-            print("got explorer instance")
+            try:
+                sumo = Explorer(
+                    env="INVALIUD_dev",
+                    token=access_token,
+                    interactive=interactive_sumo_auth,
+                )
+                print("got explorer instance")
 
-            case = sumo.get_case_by_id(sumo_case_id)
-            print("got sumo case")
+                case = sumo.get_case_by_id(sumo_case_id)
+                print("got sumo case")
 
-            outstr = f"field={case.field_name}  case={case.case_name}  sumo_id={case.sumo_id}"
-            print(outstr)
-            children.append(html.P(outstr))
+                outstr = f"field={case.field_name}  case={case.case_name}  sumo_id={case.sumo_id}"
+                print(outstr)
+                children.append(html.P(outstr))
 
-            surface_collection = case.get_objects(
-                "surface",
-                iteration_ids=[0],
-                realization_ids=[0],
-            )
+                surface_collection = case.get_objects(
+                    "surface",
+                    iteration_ids=[0],
+                    realization_ids=[0],
+                )
 
-            outstr = f"got {len(surface_collection)} surfaces in surface_collection"
-            print(outstr)
+                outstr = f"got {len(surface_collection)} surfaces in surface_collection"
+                print(outstr)
 
-            surf = surface_collection[0]
+                surf = surface_collection[0]
 
-            outstr = f"surface info: tag_name={surf.tag_name} name={surf.name} realization_id={surf.realization_id}"
-            print(outstr)
+                outstr = f"surface info: tag_name={surf.tag_name} name={surf.name} realization_id={surf.realization_id}"
+                print(outstr)
 
-            blob_bytes: bytes = surf.blob
-            byte_stream = BytesIO(blob_bytes)
+                blob_bytes: bytes = surf.blob
+                byte_stream = BytesIO(blob_bytes)
 
-            children.append(html.P("GetBlob done"))
+                elapsed_time_s = time.perf_counter() - start_tim
+                outstr = f"GetBlob done in {elapsed_time_s:.2f}s"
+                print(outstr)
+                children.append(html.P(outstr))
+
+            except Exception as exc:
+                print("Exception occurred:")
+                print("---------------------------------------------------------------")
+                print(exc)
+                print("-----")
+                print(traceback.format_exc())
+                print("---------------------------------------------------------------")
+                return [
+                    html.U(html.B("Exception occurred:")),
+                    html.P(str(exc)),
+                ]
 
             return children
