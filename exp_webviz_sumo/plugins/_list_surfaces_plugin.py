@@ -136,7 +136,7 @@ class ListSurfacesPlugin(WebvizPluginABC):
 
             sumo = Explorer(
                 env="dev",
-                token=None,
+                token=token,
                 interactive=False,
             )
             print("got explorer instance")
